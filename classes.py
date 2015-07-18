@@ -28,8 +28,7 @@ class Gotchi:
         result = ''
         try:
             if len(parts) > 1:
-                args = parts[1].split()
-                result = getattr(self, parts[0])(args)
+                result = getattr(self, parts[0])(parts[1])
             else:
                 result = getattr(self, parts[0])()
             
@@ -157,9 +156,10 @@ class Gotchi:
 
 
     def give(self, thing):
+        print(thing)
         if thing == 'food':
             return self.feed()
-        elif thing == 'water' or 'drink':
+        elif thing == 'water' or thing == 'drink':
             return self.water()
         
 
