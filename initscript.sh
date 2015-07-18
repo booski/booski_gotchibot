@@ -8,21 +8,25 @@ BINNAME="gotchibot.py"
 LOGNAME="gotchis.log"
 USER="nobody"
 
-BINPATH="${HOMEDIR}${BINNAME}"
-LOGPATH="${HOMEDIR}${LOGNAME}"
+BINPATH="${HOMEDIR}/${BINNAME}"
+LOGPATH="${HOMEDIR}/${LOGNAME}"
 CMDLINE="--euid $USER --full $BINPATH"
 
-function do_start {
-    if [ pgrep "$CMDLINE" >/dev/null  = "1" ]; then
-	su -c "$BINPATH" "$USER" > "$LOGPATH"
+do_start() {
+    if ! pgrep $CMDLINE >/dev/null; then
+	echo -e "Restarting daemon..."
+	su -c "$BINPATH" "$USER" > "$LOGPATH" &
+	echo "done."
     else
 	echo "Daemon already running. Not doing anything."
     fi
 }
 
-function do_stop {
-    if ! pkill "$CMDLINE" >/dev/null; then
+do_stop() {
+    if ! pkill $CMDLINE >/dev/null; then
 	echo "Daemon not running. Not doing anything."
+    else
+	echo "Daemon stopped."
     fi
 }
 
