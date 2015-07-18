@@ -3,45 +3,53 @@ import traceback
 
 class Gotchi:
     def __init__(self):
-        self.alive = True
         self.birth = int(time.time())
-        self.complaints = ''
-        self.attributes = dict(food = Attribute(2000, 0, 4000, True, True),
-                               drink = Attribute(1000, 0, 6000, True, True),
-                               attention = Attribute(750, 0, 750, False, False)
-                               )
+        self.lastcontact = self.birth
 
+        self.alive = True
+        self.awake = True
+        self.complaints = ''
+        self.active_attrs = dict(food = Attribute(2000, 0, 6000, True, True),
+                                 drink = Attribute(1000, 0, 4000, True, True),
+                                 attention = Attribute(3500, 0, 3500, False, False))
+        self.sleep = Attribute(3000, 0, 3000, True, False)
+        
 
     def _react(self, message):
+        wokeup = self._wake()
+        self.lastcontact = int(time.time())
+
         parts = message.split(None, 1)
         
         if parts[0].startswith('_'):
             return "What??"
 
+        result = ''
         try:
             if len(parts) > 1:
                 args = parts[1].split()
-                return getattr(self, parts[0])(args)
+                result = getattr(self, parts[0])(args)
             else:
-                return getattr(self, parts[0])()
+                result = getattr(self, parts[0])()
             
         except AttributeError:
             print(traceback.format_exc())
-            return "What?"
+            result = "What?"
+        
+        return "{} {}".format(wokeup, result).strip()
 
 
     def _tick(self):
         result = []
-        for attr_id in self.attributes:
-            attribute = self.attributes[attr_id]
+        for attr_id in self.active_attrs:
+            attribute = self.active_attrs[attr_id]
             attribute._tick()
-            
+        
             status = attribute.status()
             output = ''
             if status == 'critlow':
                 if attribute.lethal == True:
-                    end = self._die()
-                    output = "I've died from lack of {}. {}".format(attr_id, end)
+                    output = "I've died from lack of {}. {}".format(attr_id, self._die())
                 else:
                     output = "I'm completely starved for {}.".format(attr_id)
             
@@ -51,27 +59,67 @@ class Gotchi:
                 output = "You've given me too much {}.".format(attr_id)
             elif status == 'crithigh':
                 if attribute.lethal == True:
-                    end = self._die()
-                    output = "I've died from too much {}. {}".format(attr_id, end)
+                    output = "I've died from too much {}. {}".format(attr_id, self._die())
                 else:
                     output = "You've given me way too much {}.".format(attr_id)
 
             result.append(output)
 
-        result = ' '.join(result)
-        if result != self.complaints:
-            self.complaints = result
-            return result
+        result = ' '.join(result).strip()
+        if result != '':
+            if result != self.complaints:
+                self.complaints = result
+                return "{} {}".format(self._wake(), result).strip()
+
         else:
-            return None
+            if self.awake:
+                self.sleep._tick()
+                
+                if self.sleep.status() == 'critlow':
+                    return "I've died from lack of sleep. {}".format(self._die())
+                
+                elif self.sleep.status() == 'low':
+                    if int(time.time()) - self.lastcontact > 120:
+                        return self._sleep()
+                    else:
+                        result = "I'm tired"
+                        if self.complaints != result:
+                            self.complaints = result
+                            return result
+
+            else:
+                self.sleep.add(1)
+
+                if self.sleep.ismaxed():
+                    return self._wake()
+
+        return ''
+
+
+    def _wake(self):
+        if not self.awake:
+            self.awake = True
+            return "I've woken up."
+
+        else:
+            return ''
+
+
+    def _sleep(self):
+        if self.awake:
+            self.awake = False
+            return "I'm falling asleep."
         
+        else:
+            return ''
+
 
     def _isalive(self):
         return self.alive
 
 
     def _increase_attr(self, attr_id, addition):
-        self.attributes[attr_id].add(addition)
+        self.active_attrs[attr_id].add(addition)
 
     
     def _reset_complaints(self):
@@ -92,7 +140,7 @@ class Gotchi:
 
 
     def feed(self):
-        if self.attributes['attention'].status() == 'critlow':
+        if self.active_attrs['attention'].status() == 'critlow':
             return "I'm too sad to eat."
         else:
             self._increase_attr('food', 800)
@@ -105,8 +153,8 @@ class Gotchi:
 
 
     def cuddle(self):
-        current = self.attributes['attention']
-        increment = 200
+        current = self.active_attrs['attention']
+        increment = 1000
         if current.value + increment > current.max:
             increment = current.max - current.value
 
@@ -139,6 +187,13 @@ class Attribute:
     def _tick(self):
         if self.value > -500:
             self.value -= 1
+
+
+    def ismaxed(self):
+        if self.value >= self.max:
+            return True
+        else:
+            return False
 
 
     def add(self, addition):

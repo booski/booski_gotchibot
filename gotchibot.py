@@ -28,7 +28,7 @@ class Main:
             gotchi = self.gotchis[gotchi_id]
             if gotchi._isalive():
                 out = gotchi._tick()
-                if out != None:
+                if out:
                     self.send(gotchi_id, out)
 
             else:
@@ -62,7 +62,7 @@ class Main:
             else:
                 result = self.gotchi_init(gotchi_id, normalize(text))
 
-            if result != None:
+            if result:
                 self.send(gotchi_id, result)
             else:
                 print("Missing answer for: '{}'".format(message))

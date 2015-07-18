@@ -15,7 +15,7 @@ CMDLINE="--euid $USER --full $BINPATH"
 do_start() {
     if ! pgrep $CMDLINE >/dev/null; then
 	echo -n "Restarting daemon..."
-	su -c "$BINPATH" "$USER" > "$LOGPATH" &
+	( su -c "$BINPATH" "$USER" ) >> "$LOGPATH" &
 	echo "done."
     else
 	echo "Daemon already running. Not doing anything."
