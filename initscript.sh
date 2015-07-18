@@ -14,7 +14,7 @@ CMDLINE="--euid $USER --full $BINPATH"
 
 do_start() {
     if ! pgrep $CMDLINE >/dev/null; then
-	echo -e "Restarting daemon..."
+	echo -n "Restarting daemon..."
 	su -c "$BINPATH" "$USER" > "$LOGPATH" &
 	echo "done."
     else
