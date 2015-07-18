@@ -9,6 +9,7 @@ class Gotchi:
         self.alive = True
         self.awake = True
         self.complaints = ''
+        self.complaints_list = list()
         self.active_attrs = dict(food = Attribute(2000, 0, 6000, True, True),
                                  drink = Attribute(1000, 0, 4000, True, True),
                                  attention = Attribute(3500, 0, 3500, False, False))
@@ -43,7 +44,18 @@ class Gotchi:
         result = []
         for attr_id in self.active_attrs:
             attribute = self.active_attrs[attr_id]
+
+            #Normal rate
             attribute.tick()
+
+            #Accelerate if tired
+            if self.sleep.status() == 'low':
+                attribute.tick()
+
+            #Accelerate if complaint
+            for complaint in self.complaints_list:
+                if complaint:
+                    attribute.tick()
         
             status = attribute.status()
             output = ''
@@ -67,12 +79,16 @@ class Gotchi:
 
         if self.awake:
             self.sleep.tick()
+            for complaint in result:
+                if complaint:
+                    self.sleep.tick()
 
-        result = ' '.join(result).strip()
-        if result != '':
-            if result != self.complaints:
-                self.complaints = result
-                return "{} {}".format(self._wake(), result).strip()
+        result_str = ' '.join(result).strip()
+        if result_str != '':
+            if result_str != self.complaints:
+                self.complaints = result_str
+                self.complaint_results = result
+                return "{} {}".format(self._wake(), result_str).strip()
 
         else:
             if self.awake:
@@ -142,9 +158,9 @@ class Gotchi:
 
     def give(self, thing):
         if thing == 'food':
-            return feed()
+            return self.feed()
         elif thing == 'water' or 'drink':
-            return water()
+            return self.water()
         
 
     def feed(self):
@@ -161,11 +177,11 @@ class Gotchi:
 
 
     def stroke(self):
-        return cuddle()
+        return self.cuddle()
 
 
     def play(self):
-        return cuddle()
+        return self.cuddle()
 
 
     def cuddle(self):

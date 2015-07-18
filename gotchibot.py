@@ -69,11 +69,11 @@ class Main:
     
     
     def gotchi_init(self, gotchi_id, message):
-        if message == 'start':
+        if message == 'look' or message == 'find':
             self.gotchis[gotchi_id] = Gotchi()
-            return "You've found a gotchi egg!"
+            return "You've found a gotchi!"
         else:
-            return "You don't have a gotchi at the moment, you'll have to hatch one."
+            return "You don't have a gotchi at the moment, you'll have to find one."
 
 
     def receive(self):
