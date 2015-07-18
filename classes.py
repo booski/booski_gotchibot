@@ -43,7 +43,7 @@ class Gotchi:
         result = []
         for attr_id in self.active_attrs:
             attribute = self.active_attrs[attr_id]
-            attribute._tick()
+            attribute.tick()
         
             status = attribute.status()
             output = ''
@@ -65,6 +65,9 @@ class Gotchi:
 
             result.append(output)
 
+        if self.awake:
+            self.sleep.tick()
+
         result = ' '.join(result).strip()
         if result != '':
             if result != self.complaints:
@@ -73,8 +76,6 @@ class Gotchi:
 
         else:
             if self.awake:
-                self.sleep._tick()
-                
                 if self.sleep.status() == 'critlow':
                     return "I've died from lack of sleep. {}".format(self._die())
                 
@@ -139,6 +140,13 @@ class Gotchi:
         return "I lived for {} days, {} hours, {} minutes and {} seconds.".format(days, hours, minutes, seconds)
 
 
+    def give(self, thing):
+        if thing == 'food':
+            return feed()
+        elif thing == 'water' or 'drink':
+            return water()
+        
+
     def feed(self):
         if self.active_attrs['attention'].status() == 'critlow':
             return "I'm too sad to eat."
@@ -150,6 +158,14 @@ class Gotchi:
     def water(self):
         self._increase_attr('drink', 400)
         return "Gulp!"
+
+
+    def stroke(self):
+        return cuddle()
+
+
+    def play(self):
+        return cuddle()
 
 
     def cuddle(self):
@@ -184,7 +200,7 @@ class Attribute:
         self.warnhigh = warnhigh
         
 
-    def _tick(self):
+    def tick(self):
         if self.value > -500:
             self.value -= 1
 
