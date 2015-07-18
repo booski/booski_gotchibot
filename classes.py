@@ -156,12 +156,12 @@ class Gotchi:
 
 
     def give(self, thing):
-        print(thing)
         if thing == 'food':
             return self.feed()
         elif thing == 'water' or thing == 'drink':
             return self.water()
-        
+        else:
+            return "What?"
 
     def feed(self):
         if self.active_attrs['attention'].status() == 'critlow':
