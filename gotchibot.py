@@ -4,6 +4,7 @@ import requests
 import json
 import os
 import pickle
+import traceback
 from time import sleep
 from classes import Gotchi
 
@@ -16,9 +17,9 @@ class Main:
         self.gotchis = gotchis
         self.update_offset = 0
         
-        self.url = 'https://api.telegram.org/bot%s/' % token
-        self.geturl = '%sgetUpdates' % self.url
-        self.sendurl = '%ssendMessage' % self.url
+        self.url = 'https://api.telegram.org/bot{}/'.format(token)
+        self.geturl = '{}getUpdates'.format(self.url)
+        self.sendurl = '{}sendMessage'.format(self.url)
 
 
     def tick(self):
@@ -56,6 +57,7 @@ class Main:
             
             result = None
             if gotchi_id in self.gotchis:
+                self.gotchis[gotchi_id]._reset_complaints()
                 result = self.gotchis[gotchi_id]._react(normalize(text))
             else:
                 result = self.gotchi_init(gotchi_id, normalize(text))
@@ -63,7 +65,7 @@ class Main:
             if result != None:
                 self.send(gotchi_id, result)
             else:
-                print("Missing answer for: '%s'" % message)
+                print("Missing answer for: '{}'".format(message))
     
     
     def gotchi_init(self, gotchi_id, message):
@@ -80,7 +82,8 @@ class Main:
             return json.loads(response.text)
 
         except Exception:
-            return dict(ok=False, description=Exception)
+            print(traceback.format_exc())
+            return dict(ok=False, description="Something went wrong, check the log.")
 
 
     def send(self, gotchi_id, message):
