@@ -6,16 +6,22 @@ REALBIN=$(readlink -f $0)
 HOMEDIR=$(dirname "$REALBIN")
 BINNAME="gotchibot.py"
 LOGNAME="gotchis.log"
+SAVENAME="gotchis.save"
 USER="nobody"
 
 BINPATH="${HOMEDIR}/${BINNAME}"
 LOGPATH="${HOMEDIR}/${LOGNAME}"
+SAVEPATH="${HOMEDIR}${SAVENAME}"
 CMDLINE="--euid $USER --full $BINPATH"
 
 do_start() {
     if ! pgrep $CMDLINE >/dev/null; then
 	echo -n "Starting daemon..."
-	sudo -u "$USER" python3 $BINPATH 2>&1 | ts >> $LOGPATH &
+	if ! [ -e "$SAVEPATH" ]; then
+	    touch "$SAVEPATH"
+	    chown "$USER" "$SAVEPATH"
+	fi
+	sudo -u "$USER" python3 "$BINPATH" 2>&1 | ts >> "$LOGPATH" &
 	echo "done."
     else
 	echo "Daemon already running. Not doing anything."
