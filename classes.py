@@ -107,9 +107,8 @@ class Gotchi:
                             return result_str
                 else:
                     if self.complaints:
-                        result_str = "I'm happy!"
                         self._reset_complaints()
-                        return result_str
+                        return "I'm happy!"
 
             else:
                 self.sleep.add(1)
