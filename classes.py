@@ -32,7 +32,7 @@ class Gotchi:
             else:
                 result = getattr(self, parts[0])()
             
-        except AttributeError:
+        except AttributeError, TypeError:
             print(traceback.format_exc())
             result = "What?"
         
