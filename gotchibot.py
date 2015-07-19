@@ -58,7 +58,7 @@ class Main:
             
             result = None
             if gotchi_id in self.gotchis:
-                self.gotchis[gotchi_id]._reset_complaints()
+                #self.gotchis[gotchi_id]._reset_complaints()
                 result = self.gotchis[gotchi_id]._react(normalize(text))
             else:
                 result = self.gotchi_init(gotchi_id, normalize(text))

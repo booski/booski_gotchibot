@@ -52,9 +52,10 @@ class Gotchi:
                 attribute.tick()
 
             #Accelerate if complaint
-            for complaint in self.complaints_list:
-                if complaint:
-                    attribute.tick()
+            if self.complaints:
+                for complaint in self.complaints_list:
+                    if complaint:
+                        attribute.tick()
         
             status = attribute.status()
             output = ''
@@ -104,6 +105,11 @@ class Gotchi:
                             self.complaints = result_str
                             self.complaints_list = result
                             return result_str
+                else:
+                    if self.complaints:
+                        result_str = "I'm happy!"
+                        self._reset_complaints()
+                        return result_str
 
             else:
                 self.sleep.add(1)
@@ -111,13 +117,7 @@ class Gotchi:
                 if self.sleep.ismaxed():
                     return self._wake()
 
-        if not result_str:
-            if self.complaints:
-                result_str = "I'm happy!"
-                self._reset_complaints()
-                return result_str
-
-        return result_str
+        return ''
 
 
     def _wake(self):
@@ -165,7 +165,7 @@ class Gotchi:
 
 
     def debug(self):
-        result = list("DEBUG")
+        result = ["DEBUG"]
         for attr_id in self.active_attrs:
             result.append("{}: {}".format(attr_id, self.active_attrs[attr_id].value))
             
