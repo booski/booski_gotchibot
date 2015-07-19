@@ -188,7 +188,7 @@ class Gotchi:
         if self.active_attrs['attention'].status() == 'critlow':
             return "I'm too sad to eat."
         else:
-            self._increase_attr('food', 800)
+            self._increase_attr('food', 600)
             return "Yum!"
 
 
@@ -207,7 +207,7 @@ class Gotchi:
 
     def cuddle(self):
         current = self.active_attrs['attention']
-        increment = 1000
+        increment = 700
         if current.value + increment > current.max:
             increment = current.max - current.value
 
