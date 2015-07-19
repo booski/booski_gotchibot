@@ -111,7 +111,7 @@ class Gotchi:
                 if self.sleep.ismaxed():
                     return self._wake()
 
-        if !result_str:
+        if not result_str:
             if self.complaints:
                 result_str = "I'm happy!"
                 self.complaints = ''
