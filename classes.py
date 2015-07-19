@@ -78,15 +78,16 @@ class Gotchi:
 
         if self.awake:
             self.sleep.tick()
+
             for complaint in result:
                 if complaint:
                     self.sleep.tick()
 
         result_str = ' '.join(result).strip()
-        if result_str != '':
+        if result_str:
             if result_str != self.complaints:
                 self.complaints = result_str
-                self.complaint_results = result
+                self.complaints_list = result
                 return "{} {}".format(self._wake(), result_str).strip()
 
         else:
@@ -96,11 +97,13 @@ class Gotchi:
                 
                 elif self.sleep.status() == 'low':
                     if int(time.time()) - self.lastcontact > 120:
+                        self._reset_complaints()
                         return self._sleep()
                     else:
                         result = "I'm tired"
                         if self.complaints != result:
                             self.complaints = result
+                            self.complaints_list = list(result)
                             return result
 
             else:
