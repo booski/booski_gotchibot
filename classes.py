@@ -114,8 +114,7 @@ class Gotchi:
         if not result_str:
             if self.complaints:
                 result_str = "I'm happy!"
-                self.complaints = ''
-                self.complaints_list = list()
+                self._reset_complaints()
                 return result_str
 
         return result_str
@@ -137,6 +136,11 @@ class Gotchi:
         
         else:
             return ''
+
+
+    def _reset_complaints():
+        self.complaints = ''
+        self.complaints_list = list()
 
 
     def _isalive(self):
