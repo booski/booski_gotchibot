@@ -206,7 +206,7 @@ class Gotchi:
 
     def cuddle(self):
         current = self.active_attrs['attention']
-        increment = 700
+        increment = 350
         if current.value + increment > current.max:
             increment = current.max - current.value
 
