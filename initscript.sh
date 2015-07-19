@@ -14,8 +14,8 @@ CMDLINE="--euid $USER --full $BINPATH"
 
 do_start() {
     if ! pgrep $CMDLINE >/dev/null; then
-	echo -n "Restarting daemon..."
-	( su -c "$BINPATH" "$USER" ) >> "$LOGPATH" &
+	echo -n "Starting daemon..."
+	sudo -u "$USER" python3 $BINPATH 2>&1 | ts >> $LOGPATH &
 	echo "done."
     else
 	echo "Daemon already running. Not doing anything."
@@ -23,7 +23,7 @@ do_start() {
 }
 
 do_stop() {
-    if ! pkill $CMDLINE >/dev/null; then
+    if ! pkill $CMDLINE --signal SIGINT >/dev/null; then
 	echo "Daemon not running. Not doing anything."
     else
 	echo "Daemon stopped."
@@ -50,6 +50,6 @@ case "$command" in
 	;;
     
     'restart' )
-	do_stop && do_start
+	do_stop && sleep 1 &&  do_start
 	;;
 esac

@@ -3,6 +3,7 @@
 import requests
 import json
 import os
+import sys
 import pickle
 import traceback
 from time import sleep
@@ -96,6 +97,7 @@ def normalize(text):
 
 ### Logic ###
 
+print("Starting bot...")
 try:
     homedir = os.path.dirname(__file__)
     tokenfile = homedir + '/token'
@@ -117,6 +119,7 @@ try:
 
     while True:
         main.tick()
+        sys.stdout.flush()
         sleep(1)
 
 except KeyboardInterrupt:
