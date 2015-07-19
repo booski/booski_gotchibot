@@ -98,7 +98,7 @@ class Gotchi:
                 
                 elif self.sleep.status() == 'low':
                     if int(time.time()) - self.lastcontact > 120:
-                        result_str = self._sleep()
+                        return self._sleep()
                     else:
                         result_str = "I'm tired"
                         if self.complaints != result_str:
