@@ -171,7 +171,7 @@ class Gotchi:
         elif thing == 'water' or thing == 'drink':
             return self.water()
         else:
-            return "What?"
+            return "Give what?"
 
     def feed(self):
         if self.active_attrs['attention'].status() == 'critlow':
