@@ -138,7 +138,7 @@ class Gotchi:
             return ''
 
 
-    def _reset_complaints():
+    def _reset_complaints(self):
         self.complaints = ''
         self.complaints_list = list()
 
