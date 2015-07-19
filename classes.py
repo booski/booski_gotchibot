@@ -170,6 +170,8 @@ class Gotchi:
             return self.feed()
         elif thing == 'water' or thing == 'drink':
             return self.water()
+        elif thing == 'attention':
+            return self.cuddle()
         else:
             return "Give what?"
 
