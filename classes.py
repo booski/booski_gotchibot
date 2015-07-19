@@ -97,14 +97,13 @@ class Gotchi:
                 
                 elif self.sleep.status() == 'low':
                     if int(time.time()) - self.lastcontact > 120:
-                        self._reset_complaints()
-                        return self._sleep()
+                        result_str = self._sleep()
                     else:
-                        result = "I'm tired"
-                        if self.complaints != result:
-                            self.complaints = result
-                            self.complaints_list = list(result)
-                            return result
+                        result_str = "I'm tired"
+                        if self.complaints != result_str:
+                            self.complaints = result_str
+                            self.complaints_list = result
+                            return result_str
 
             else:
                 self.sleep.add(1)
@@ -112,7 +111,14 @@ class Gotchi:
                 if self.sleep.ismaxed():
                     return self._wake()
 
-        return ''
+        if !result_str:
+            if self.complaints:
+                result_str = "I'm happy!"
+                self.complaints = ''
+                self.complaints_list = list()
+                return result_str
+
+        return result_str
 
 
     def _wake(self):
@@ -141,10 +147,6 @@ class Gotchi:
         self.active_attrs[attr_id].add(addition)
 
     
-    def _reset_complaints(self):
-        self.complaints = ''
-        
-
     def _die(self):
         self.alive = False
 
