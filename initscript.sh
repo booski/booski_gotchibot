@@ -58,4 +58,8 @@ case "$command" in
     'restart' )
 	do_stop && sleep 1 &&  do_start
 	;;
+    * )
+	echo "Usage: $0 [start|stop|restart]"
+	exit 1
+	;;
 esac
