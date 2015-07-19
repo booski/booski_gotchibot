@@ -158,8 +158,8 @@ class Gotchi:
         return "I lived for {} days, {} hours, {} minutes and {} seconds.".format(days, hours, minutes, seconds)
 
 
-    def look(self):
-        result = list()
+    def debug(self):
+        result = list("DEBUG")
         for attr_id in self.active_attrs:
             result.append("{}: {}".format(attr_id, self.active_attrs[attr_id].value))
             
