@@ -56,7 +56,7 @@ case "$command" in
 	;;
     
     'restart' )
-	do_stop && sleep 1 &&  do_start
+	do_stop && sleep 1 && do_start
 	;;
     * )
 	echo "Usage: $0 [start|stop|restart]"
